@@ -1,3 +1,30 @@
-./data/flickr30k-images-2
-./data/flickr30k-images
-./.venv/
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Datasets / data
+data/
+*.zip
+*.tar
+*.tar.gz
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment / secrets
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
