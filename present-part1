@@ -1,0 +1,183 @@
+
+## Part 1 — Build the basic text → image retrieval system
+
+### Goal
+
+Get this working end-to-end first:
+
+```text
+Dataset
+   ↓
+Images + text captions
+   ↓
+CLIP / SigLIP
+   ↓
+Image embeddings
+   ↓
+Vector index
+   ↓
+Text query
+   ↓
+Text embedding
+   ↓
+Similarity search
+   ↓
+Top-K images
+```
+
+Do **not** add SAM, VLMs, attributes, relations, or reranking yet.
+
+### Step 1 — Choose the initial dataset
+
+For the first prototype, use **Flickr30K** or **COCO** because they give you straightforward image-text pairs.
+
+You need:
+
+```text
+dataset/
+├── images/
+│   ├── image_001.jpg
+│   ├── image_002.jpg
+│   └── ...
+└── captions.csv
+
+image_id,caption
+image_001,"A dog running on a beach"
+image_002,"A person riding a bicycle"
+...
+```
+
+For the first experiment, you don't need millions of images. Start with **10K–50K images**.
+
+### Step 2 — Load the retrieval model
+
+Start with **SigLIP or CLIP**.
+
+Conceptually:
+
+```python
+image_embedding = image_encoder(image)
+text_embedding = text_encoder(text)
+```
+
+Normalize them:
+
+```python
+image_embedding = image_embedding / ||image_embedding||
+text_embedding = text_embedding / ||text_embedding||
+```
+
+Then similarity becomes:
+
+```python
+similarity = image_embedding @ text_embedding
+```
+
+### Step 3 — Build the image index
+
+Run the image encoder over the entire image collection **once**:
+
+```text
+image_001 → [0.12, -0.04, ...]
+image_002 → [0.31,  0.22, ...]
+...
+```
+
+Store these embeddings in a vector index.
+
+For the first implementation, **FAISS** is sufficient.
+
+```text
+10,000 images
+      ↓
+10,000 image embeddings
+      ↓
+FAISS index
+```
+
+### Step 4 — Implement text search
+
+User enters:
+
+```text
+"golden retriever running on a beach"
+```
+
+Pipeline:
+
+```text
+Text
+ ↓
+SigLIP/CLIP text encoder
+ ↓
+Query embedding
+ ↓
+FAISS
+ ↓
+Top 10 image embeddings
+ ↓
+Retrieve corresponding images
+```
+
+### Step 5 — Evaluate it
+
+Your first experiment should produce:
+
+```text
+Query
+    ↓
+Top-1
+Top-5
+Top-10
+```
+
+Then calculate the standard metrics from your proposal:
+
+- Recall@1
+    
+- Recall@5
+    
+- Recall@10
+    
+- mAP
+    
+- nDCG
+    
+
+### Your first milestone
+
+Don't move to SAM until you can demonstrate:
+
+```text
+                BASELINE
+
+Text Query
+    ↓
+CLIP/SigLIP
+    ↓
+Vector Search
+    ↓
+Top-K Images
+    ↓
+Recall@1 / Recall@5 / Recall@10
+```
+
+Save this baseline result.
+
+Then **Part 2** will be:
+
+```text
+Image
+ ↓
+Object detection
+ ↓
+SAM/SAM2
+ ↓
+Object-level representations
+ ↓
+Attributes / actions / relations
+```
+
+and we'll test whether those semantic representations actually improve the baseline rather than assuming they do.
+
+**So your immediate implementation target is simply: `Dataset → SigLIP/CLIP → FAISS → Text Query → Top-K → Recall@K`.**
