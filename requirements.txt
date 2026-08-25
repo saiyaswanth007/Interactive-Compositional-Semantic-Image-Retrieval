@@ -1,2 +1,10 @@
 kaggle
 kagglehub
+torch
+torchvision
+transformers
+faiss-cpu
+numpy
+Pillow
+matplotlib
+tqdm

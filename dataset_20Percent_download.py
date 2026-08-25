@@ -1,11 +1,10 @@
 from kaggle.api.kaggle_api_extended import KaggleApi
-
-DATASET = "adityajn105/flickr30k"
+from config import KAGGLE_DATASET
 
 api = KaggleApi()
 api.authenticate()
 
-files = api.dataset_list_files(DATASET)
+files = api.dataset_list_files(KAGGLE_DATASET)
 
 print("\nALL DATASET FILES:\n")
 
